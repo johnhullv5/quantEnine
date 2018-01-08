@@ -39,6 +39,7 @@ import quant.serviceImpl.CrossUpRule;
 
 import quant.serviceImpl.RuleImplService;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import quant.service.CrossRule;
 import quant.service.LoadService;
@@ -187,10 +188,45 @@ public class Application {
        	
    	}
     
+    @RequestMapping("/indicators")
+   	public String indicators() {
+    	InputParameterSet params = getInputParameterSet;
+    	String date = params.getIndicatorDate();
+    	
+    	Map<String,List<String>> indictors = finalData.get(date);
+    	indictors.put("\"SMA\"", indictors.get("SMASIG"));
+    	indictors.put("\"MACD\"", indictors.get("MACDSIG"));
+    	indictors.put("\"BOLL\"", indictors.get("BOLLSIG"));
+    	indictors.put("\"RSI\"", indictors.get("RSISIG"));
+    	indictors.put("\"KDJ\"", indictors.get("KDJSIG"));
+    	indictors.put("\"REX\"", indictors.get("REXSIG"));
+    	indictors.put("\"VMA\"", indictors.get("VMASIG"));
+    	indictors.put("\"HIGH\"", indictors.get("HIGHSIG"));
+//    	Map<String,String> indictors2 = new HashMap<String,String>();
+//    	indictors2.put("SMA","A");
+    	
+    	Gson gson = new GsonBuilder().disableHtmlEscaping().create();
+//		Map<String, String> data = service.getOne(symbol);
+//		System.out.println(data);
+    	System.out.println(indictors.toString());
+		String json = gson.toJson(indictors.toString().replace("=", ":"));
+		return indictors.toString().replace("=", ":");
+       	
+   	}
+    
     public Map<String,List<String>> getIndictors(String date)
     {
-    	return null;
+    	if(finalData.containsKey(date))
+    	{
+    		return finalData.get(date);
+    	}
+    	else{
+    		return null;
+    	}
+    	
     }
+    
+    
     
     //the key is the date
     public void transform()
@@ -210,7 +246,7 @@ public class Application {
     				{
     					Map<String,List<String>> one = new HashMap<String,List<String>>();
     					List<String> symbolList = new ArrayList<String>();
-    					symbolList.add(symbol);
+    					symbolList.add("\""+symbol+"\"");
     					one.put(indicator, symbolList);
     					finalData.put(t, one);
     				}
@@ -221,13 +257,13 @@ public class Application {
     					if(!ind.containsKey(indicator))
     					{
     						List<String> symbolList = new ArrayList<String>();
-        					symbolList.add(symbol);
+    						symbolList.add("\""+symbol+"\"");
     						ind.put(indicator, symbolList);
     					}
     					else
     					{
     						List<String> symbolList  = ind.get(indicator);
-    						symbolList.add(symbol);
+    						symbolList.add("\""+symbol+"\"");
     						
     						ind.put(indicator, symbolList);
     					}
@@ -264,9 +300,6 @@ public class Application {
 				long startTime = System.nanoTime();
 				try {
 					Observable<Pair<DateTime, HisData>> data = loadservice.loadOneSymbol(symbol);
-
-					
-//
 					Observable<Pair<DateTime, Double>> close = mathService.CLOSE(data).takeLast(params.getTake_N());
 					
 //					close.subscribe(new Action1<Pair<DateTime, Double>>() {
@@ -553,6 +586,10 @@ public class Application {
 			}
 			transform();
 			//System.out.println(finalData);
+			
+			Map<String,List<String>> result = getIndictors("2017-02-03");
+			
+			//System.out.println(result);
 			System.out.println("done");
 		};
     }

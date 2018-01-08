@@ -84,6 +84,9 @@ public class InputParameterSet {
 	@Value("${rule.rex.n2}")
 	private int rexN2;
 	
+	@Value("${indicator.date}")
+	private String  indicatorDate;
+	
 	@Value("${database}")
 	private String  database;
 	
@@ -92,6 +95,11 @@ public class InputParameterSet {
 	
 	@Value("${dbpasswd}")
 	private String  dbpasswd;
+	
+	public String getIndicatorDate()
+	{
+		return  indicatorDate;
+	}
 	
 	public int getVMA_N()
 	{
