@@ -60,12 +60,4 @@ public class Foo {
 	private String vol;
 
 
-//	   private void setId(String id) {
-//	      this.id = id;
-//	   }
-//
-//	   private String getId() {
-//	      return id;
-//	   }
-
 }

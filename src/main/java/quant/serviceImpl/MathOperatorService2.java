@@ -82,59 +82,6 @@ public class MathOperatorService2 {
 		});
 	}
 
-//	// improve hard coding weights.
-//	public static double calculateUNDERVALUEIndicator(FunData data) {
-//		return data.getTrillingPE() * 0.3 + data.getPB() * 0.3 + data.getEV() * 0.2 + data.getPriceToSales() * 0.2;
-//	}
-//
-//	public static double calculateGROWTHIndicator(FunData data) {
-//		if ((data.getEarningsQuarterlyGrowth() > 0.1) && (data.getRevenueGrowth() > 0.1)) {
-//			return 1.0;
-//		} else {
-//			return 0.0;
-//		}
-//	}
-
-//	public static double calculateCASHFLOWIndicator(FunData data) {
-//		if (data.getOperatingCashflow() > data.getNetIncomeToCommon()) {
-//			return 1.0;
-//		} else {
-//			return 0.0;
-//		}
-//	}
-//
-//	public static double calculateYIELDSIndicator(FunData data) {
-//		if (data.getYield() > 0.05) {
-//			return 1.0;
-//		} else {
-//			return 0.0;
-//		}
-//	}
-
-	// UNDERVALUE indicator value.
-//	public static Observable<Pair<DateTime, Double>> UNDERVALUE(Observable<Pair<DateTime, FunData>> data) {
-//		return Observable.zip(data.map(p -> p.getLeft()), data.map(p -> calculateUNDERVALUEIndicator(p.getRight())),
-//				(t, p) -> new ImmutablePair(t, p));
-//	}
-//
-//	// GROWTH Indicator
-//	public static Observable<Pair<DateTime, Double>> GROWTH(Observable<Pair<DateTime, FunData>> data) {
-//		return Observable.zip(data.map(p -> p.getLeft()), data.map(p -> calculateGROWTHIndicator(p.getRight())),
-//				(t, p) -> new ImmutablePair(t, p));
-//	}
-//
-//	// CASHFLOW Indicator
-//	public static Observable<Pair<DateTime, Double>> CASHFLOW(Observable<Pair<DateTime, FunData>> data) {
-//		return Observable.zip(data.map(p -> p.getLeft()), data.map(p -> calculateCASHFLOWIndicator(p.getRight())),
-//				(t, p) -> new ImmutablePair(t, p));
-//	}
-//
-//	// YIELDS Indicator
-//	public static Observable<Pair<DateTime, Double>> YIELDS(Observable<Pair<DateTime, FunData>> data) {
-//		return Observable.zip(data.map(p -> p.getLeft()), data.map(p -> calculateYIELDSIndicator(p.getRight())),
-//				(t, p) -> new ImmutablePair(t, p));
-//	}
-
 	// use adjclose instead of close.
 	public static Observable<Pair<DateTime, Double>> CLOSE(Observable<Pair<DateTime, HisData>> data) {
 		return Observable.zip(data.map(p -> p.getLeft()),
@@ -229,21 +176,6 @@ public class MathOperatorService2 {
 	public static Observable<Pair<DateTime, Double>> EMA(Observable<Pair<DateTime, Double>> close, int N) {
 		double multiplier = 2.0 / (N + 1);
 		Observable<Pair<DateTime, Double>> sma = MathOperatorService2.SMA(close, N).first();
-		
-		
-		
-		sma.subscribe(new Action1<Pair<DateTime, Double>>() {
-
-	        @Override
-	        public void call(Pair<DateTime, Double> s) {
-	            System.out.println("Hello " + s.getLeft().toString() + "!"+s.getRight().toString());
-	        }
-
-	    });
-		
-		 System.out.println(N);
-		 
-		 
 		double smaValue = sma.toBlocking().last().getRight();
 		Observable<EMAStateClass> result = close.skip(N - 1).scan(new EMAStateClass(DateTime.now(), smaValue, 0), (s, e) -> {
 			s.t = e.getLeft();
@@ -292,12 +224,7 @@ public class MathOperatorService2 {
 				}).skip(1);
 	}
 
-	// need N1 < N2 !!!!
-	public static Observable<Pair<DateTime, Double>> MAOSC(Observable<Pair<DateTime, Double>> close, int N1, int N2) {
-		Observable<Pair<DateTime, Double>> sma1 = MathOperatorService2.SMA(close, N1).skip(N2 - N1);
-		Observable<Pair<DateTime, Double>> sma2 = MathOperatorService2.SMA(close, N2);
-		return Observable.zip(sma1, sma2, (s1, s2) -> new ImmutablePair(s1.getLeft(), (s1.getRight() - s2.getRight())));
-	}
+
 
 	public static Observable<Pair<DateTime, Triple<Double, Double, Double>>> BOLL(
 			Observable<Pair<DateTime, Double>> close, int N, double alpha) {
@@ -387,18 +314,7 @@ public class MathOperatorService2 {
 				(h, l) -> new ImmutablePair(h.getLeft(), 100 - 100 / (1 - h.getRight() / l.getRight())));
 	}
 
-	// TODO need to test...
-	public static Observable<Pair<DateTime, Double>> CMCI(Observable<Pair<DateTime, Double>> tp, int N,
-			double multiplier) {
 
-		Observable<Pair<DateTime, Double>> meanDeviation = MathOperatorService2.MeanDeviation(tp, N);
-
-		Observable<Pair<DateTime, Double>> avg = MathOperatorService2.SMA(tp, N);
-
-		return Observable.zip(tp.skip(N - 1), avg, meanDeviation, (a, b, c) -> new ImmutablePair(a.getLeft(),
-				(a.getRight() - b.getRight()) / (multiplier * c.getRight())));
-
-	}
 
 	public static double compareUpMoveAndDownMove(double u, double d) {
 		if (u > d && u > 0) {
@@ -474,63 +390,7 @@ public class MathOperatorService2 {
 
 	}
 
-	// TODO need test heavily...
-	public static Observable<Pair<DateTime, Double>> DMI(Observable<Pair<DateTime, Double>> high,
-			Observable<Pair<DateTime, Double>> low, Observable<Pair<DateTime, Double>> close, int N) {
-
-		// 1.upmove
-		Observable<Pair<DateTime, Double>> upMove = MathOperatorService2.DIFF(high);
-
-		// 2.DownMove
-		Observable<Pair<DateTime, Double>> downMove = MathOperatorService2.DIFF(low);
-
-		Observable<Pair<DateTime, Double>> plusDM = Observable.zip(upMove, downMove,
-				(u, d) -> (new ImmutablePair(u.getLeft(),
-						MathOperatorService2.compareUpMoveAndDownMove(u.getRight(), d.getRight()))));
-
-		Observable<Pair<DateTime, Double>> minusDM = Observable.zip(upMove, downMove,
-				(u, d) -> (new ImmutablePair(u.getLeft(),
-						MathOperatorService2.compareUpMoveAndDownMove(d.getRight(), u.getRight()))));
-
-		Observable<Pair<DateTime, Double>> tr = MathOperatorService2.TR(high, low, close);
-
-		Observable<Double> tr_v = tr.map(x -> x.getRight());
-		Observable<DateTime> tr_t = tr.skip(N - 1).map(x -> x.getLeft());
-		double initial_v = MathOperatorService2.SMA(tr, N).first().map(x -> x.getRight()).toBlocking().last();
-
-		Observable<Double> atr_v = tr_v.window(N, 1).skipLast(N - 1).flatMap(win -> win.reduce(initial_v, (s, c) -> {
-			return (s * (N - 1) + c) / N;
-		}));
-
-		// TODO the timestamp matches?
-		Observable<Pair<DateTime, Double>> atr = Observable.zip(tr_t, atr_v, (t, v) -> new ImmutablePair(t, v));
-
-		Observable<Pair<DateTime, Double>> plusADM = MathOperatorService2.SMA(plusDM, N);
-
-		Observable<Pair<DateTime, Double>> minusADM = MathOperatorService2.SMA(minusDM, N);
-
-		Observable<Pair<DateTime, Double>> plusDL = Observable.zip(plusADM, atr,
-				(adm, r) -> new ImmutablePair(adm.getLeft(), (adm.getRight() / r.getRight())));
-
-		Observable<Pair<DateTime, Double>> minusDL = Observable.zip(minusADM, atr,
-				(adm, r) -> new ImmutablePair(adm.getLeft(), (adm.getRight() / r.getRight())));
-
-		Observable<Pair<DateTime, Double>> dx = Observable.zip(plusDL, minusDL, (a, b) -> new ImmutablePair(a.getLeft(),
-				((a.getRight() - b.getRight()) / (a.getRight() + b.getRight()))));
-
-		double initial_dx = MathOperatorService2.SMA(dx, N).first().map(x -> x.getRight()).toBlocking().last();
-
-		Observable<DateTime> dx_t = dx.skip(N - 1).map(x -> x.getLeft());
-
-		Observable<Double> dx_v = dx.map(x -> x.getRight());
-
-		Observable<Double> adx_v = dx_v.window(N, 1).skipLast(N - 1).flatMap(win -> win.reduce(initial_dx, (s, c) -> {
-			return (s * (N - 1) + c) / N;
-		}));
-
-		return Observable.zip(dx_t, adx_v, (t, v) -> new ImmutablePair(t, v));
-
-	}
+	
 
 	public static Observable<Pair<DateTime, Double>> KBAND(Observable<Pair<DateTime, Double>> high,
 			Observable<Pair<DateTime, Double>> low, Observable<Pair<DateTime, Double>> close, int N) {
@@ -555,28 +415,6 @@ public class MathOperatorService2 {
 		Observable<Pair<DateTime, Double>> tvb = Observable.zip(close, high, low, open, (c, h, l,
 				o) -> new ImmutablePair(c.getLeft(), (3 * c.getRight() - h.getRight() - l.getRight() - o.getRight())));
         return MathOperatorService2.SMA(tvb, N1);
-		//return MathOperatorService2.EMA(MathOperatorService2.SMA(tvb, N1), N2);
-	}
-
-	// TODO not implement lack the ADL initial value. need test
-	public static Observable<Pair<DateTime, Double>> ADO(Observable<Pair<DateTime, Double>> high,
-			Observable<Pair<DateTime, Double>> low, Observable<Pair<DateTime, Double>> close,
-			Observable<Pair<DateTime, Double>> volume, int N1, int N2) {
-		Observable<Pair<DateTime, Double>> moneyMultiplier = Observable.zip(high, low, close,
-				(h, l, c) -> new ImmutablePair(h.getLeft(),
-						((c.getRight() - l.getRight()) - (h.getRight() - c.getRight()))
-								/ (h.getRight() - l.getValue())));
-
-		Observable<Pair<DateTime, Double>> moneyMultiplierVolume = Observable.zip(moneyMultiplier, volume,
-				(m, v) -> new ImmutablePair(m.getLeft(), (m.getRight() * v.getRight())));
-		// need skip 1?
-		Observable<DateTime> t = moneyMultiplierVolume.skip(1).map(x -> x.getLeft());
-		Observable<Double> v = moneyMultiplierVolume.map(x -> x.getRight());
-
-		Observable<Double> adl = v.window(2, 1).skipLast(1).flatMap(win -> win.reduce(0.0, (s, c) -> (s + c)));
-
-		return Observable.zip(t, adl, (a, b) -> new ImmutablePair(a, b));
-
 	}
 
 }

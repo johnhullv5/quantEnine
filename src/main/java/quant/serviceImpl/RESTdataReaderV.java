@@ -77,44 +77,7 @@ public class RESTdataReaderV implements DataReader{
 			return null;
 		}
 		
-		//List<HistData> symbols = o.getProperties();
-		
-		
-		
-//		while(symbols.hasNext())
-//		{
-//			String s = symbols.next();
-//			List<Foo> f = o.getProperties().get(s);
-//			for(Foo d : f)
-//			{
-//				HisData data = new HisData();
-//				DateTime t = new DateTime(DATE_FORMAT.parse(d.getDate()));
-//				data.setDate(t);
-//				data.setAdjClosePrice(d.getAdj());
-//				data.setClosePrice(d.getClose());
-//				data.setHighPrice(d.getHigh());
-//				data.setLowPrice(d.getLow());
-//				data.setOpenPrice(d.getOpen());
-//				data.setSymbol(d.getSymbol());
-//				data.setVolume(d.getVol());
-//				if (!result.keySet().contains(t)) {
-//					result.put(t, data);
-//				}
-//				
-//			}
-//		}
-		
-		
-		
-		
 
-//		for (Iterator<DateTime> i = result.keySet().iterator(); i.hasNext();) {
-//			DateTime item = i.next();
-//			
-//			Pair<DateTime, HisData> p = new ImmutablePair(item, result.get(item));
-//			list.add(p);
-//		}
-		
 	}
 	
 	

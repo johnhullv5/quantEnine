@@ -203,14 +203,7 @@ public class Application {
     	indictors.put("\"REX\"", indictors.get("REXSIG"));
     	indictors.put("\"VMA\"", indictors.get("VMASIG"));
     	indictors.put("\"HIGH\"", indictors.get("HIGHSIG"));
-//    	Map<String,String> indictors2 = new HashMap<String,String>();
-//    	indictors2.put("SMA","A");
     	
-    	Gson gson = new GsonBuilder().disableHtmlEscaping().create();
-//		Map<String, String> data = service.getOne(symbol);
-//		System.out.println(data);
-    	System.out.println(indictors.toString());
-		String json = gson.toJson(indictors.toString().replace("=", ":"));
 		return indictors.toString().replace("=", ":");
        	
    	}
@@ -283,11 +276,10 @@ public class Application {
 		return () -> {
 			DateFormat df = getDateFormat;
 			List<String> symbols = getSymbols;
-//			List<String> symbols = new ArrayList<String>();
-//			symbols.add("GOOG");
 			InputParameterSet params = getInputParameterSet;
 			DateTimeFormatter fmt = getDateTimeFormatter;
 			RuleImplService util = getRuleImplService;
+			
 			//read data from network api call
 			//RESTdataReaderV reader = new RESTdataReaderV();
 	    	//Observable<Pair<DateTime, HisData>> data = reader.readOneSymbol("http://localhost:8090/api/stockhis", "TK");
@@ -296,7 +288,6 @@ public class Application {
 			MathOperatorService2 mathService = getMathOperatorService;
 
 //			long startTime_ = System.nanoTime();
-//
 			for (String symbol : symbols) {
 				long startTime = System.nanoTime();
 				try {
@@ -514,18 +505,6 @@ public class Application {
     				
 					Observable<Pair<DateTime, Double>> highruleSignal = highrule.runRule(util);
 					Observable<Pair<DateTime, Double>> hoh1 = mathService.SHIFT_N(hoh, 1);
-//					Observable<Pair<DateTime, Double>> substract = mathService.SUBSTRACT(close.skip(11), hoh1);
-//					highruleSignal.subscribe(new Action1<Pair<DateTime, Double>>() {
-//						
-//									            @Override
-//									            public void call(Pair<DateTime, Double> s) {
-//									                System.out.println("highruleSignal " + s.getKey().toString() + ":        "+s.getValue().toString());
-//									                //n+=1;
-//									            }
-//						
-//									        });
-//					System.out.println("  *************************************************");
-//					
 					List<Pair<DateTime, Double>> highSignalList = highruleSignal.toList().toBlocking().single();
 					
 					Map<String, String> highCrossMap = new TreeMap<String, String>();
@@ -556,14 +535,7 @@ public class Application {
 						Pair<DateTime, Double> pair = rexruleSignalList.get(i);
 						rexCrossMap.put(pair.getKey().toString(fmt), String.format("%.2f", pair.getValue()));
 					}
-					
-					
-					
-					
-//
 					Map<String, Map<String, String>> ruleMap = new HashMap<String, Map<String, String>>();
-//
-//
 					ruleMap.put("SMASIG", SMACrossUpMap);
 					ruleMap.put("VMASIG", emaCrossMap);
 					ruleMap.put("WILLIAMSIG", williamCrossUpMap2);
@@ -573,7 +545,6 @@ public class Application {
 					ruleMap.put("KDJSIG", kdjCrossMap);
 					ruleMap.put("RSISIG", rsiSigMap);
 					ruleMap.put("REXSIG", rexCrossMap);
-//
 					initData.put(symbol, ruleMap);
 
 				} catch (Exception e) {
@@ -586,28 +557,13 @@ public class Application {
 
 			}
 			transform();
-			//System.out.println(finalData);
 			
 			Map<String,List<String>> result = getIndictors("2017-02-03");
 			
-			//System.out.println(result);
 			System.out.println("done");
 		};
     }
 
-//    @Bean
-//    public CommandLineRunner commandLineRunner(ApplicationContext ctx) {
-//        return args -> {
-//
-//            System.out.println("Let's inspect the beans provided by Spring Boot:");
-//
-//            String[] beanNames = ctx.getBeanDefinitionNames();
-//            Arrays.sort(beanNames);
-//            for (String beanName : beanNames) {
-//                System.out.println(beanName);
-//            }
-//
-//        };
-//    }
+
 
 }

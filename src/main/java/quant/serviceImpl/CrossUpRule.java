@@ -62,17 +62,5 @@ public class CrossUpRule implements CrossRule {
 	}
 
 
-//	@Override
-//	public Observable<Pair<DateTime, Double>> runRule(com.COMP313.ISP.service.RuleImplService ruleUtils) {
-//		// TODO Auto-generated method stub
-//		return null;
-//	}
-//
-//
-//	@Override
-//	public Observable<Pair<DateTime, Double>> runRule(com.COMP313.ISP.service.RuleImplService ruleUtils) {
-//		// TODO Auto-generated method stub
-//		return null;
-//	}
 
 }
