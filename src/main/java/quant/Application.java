@@ -21,6 +21,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -187,7 +188,7 @@ public class Application {
        		return json;
        	
    	}
-    
+    @CrossOrigin
     @RequestMapping("/indicators")
    	public String indicators() {
     	InputParameterSet params = getInputParameterSet;
