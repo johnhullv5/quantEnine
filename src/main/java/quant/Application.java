@@ -189,6 +189,18 @@ public class Application {
        	
    	}
     
+    private List<String> cutdown(List<String> source,int N)
+    {
+    	List<String> return_list = new ArrayList<String>();
+    	int length = Math.min(source.size(), N);
+    	for(int i = 0; i<length;++i)
+    	{
+    		return_list.add(source.get(i));
+    	}
+    	
+    	return return_list;
+    }
+    
     
     
     
@@ -197,18 +209,19 @@ public class Application {
    	public  @ResponseBody String indicators() {
     	InputParameterSet params = getInputParameterSet;
     	String date = params.getIndicatorDate();
+    	int N = params.getCutdownN();
     	
     	Map<String,List<String>> indictors_return = new HashMap<String,List<String>>();
     	
     	Map<String,List<String>> indictors = finalData.get(date);
-    	indictors_return.put("\"SMA\"", indictors.get("SMASIG"));
-    	indictors_return.put("\"MACD\"", indictors.get("MACDSIG"));
-    	indictors_return.put("\"BOLL\"", indictors.get("BOLLSIG"));
-    	indictors_return.put("\"RSI\"", indictors.get("RSISIG"));
-    	indictors_return.put("\"KDJ\"", indictors.get("KDJSIG"));
-    	indictors_return.put("\"REX\"", indictors.get("REXSIG"));
-    	indictors_return.put("\"VMA\"", indictors.get("VMASIG"));
-    	indictors_return.put("\"HIGH\"", indictors.get("HIGHSIG"));
+    	indictors_return.put("\"SMA\"", cutdown(indictors.get("SMASIG"),N));
+    	indictors_return.put("\"MACD\"", cutdown(indictors.get("MACDSIG"),N));
+    	indictors_return.put("\"BOLL\"", cutdown(indictors.get("BOLLSIG"),N));
+    	indictors_return.put("\"RSI\"", cutdown(indictors.get("RSISIG"),N));
+    	indictors_return.put("\"KDJ\"", cutdown(indictors.get("KDJSIG"),N));
+    	indictors_return.put("\"REX\"", cutdown(indictors.get("REXSIG"),N));
+    	indictors_return.put("\"VMA\"", cutdown(indictors.get("VMASIG"),N));
+    	indictors_return.put("\"HIGH\"",cutdown( indictors.get("HIGHSIG"),N));
     	
 		return indictors_return.toString().replace("=", ":");
        	

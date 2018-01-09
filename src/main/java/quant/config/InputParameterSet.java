@@ -96,6 +96,14 @@ public class InputParameterSet {
 	@Value("${dbpasswd}")
 	private String  dbpasswd;
 	
+	@Value("${cutdownN}")
+	private int  cutdownN;
+	
+	public int getCutdownN()
+	{
+		return cutdownN;
+	}
+	
 	public String getIndicatorDate()
 	{
 		return  indicatorDate;
