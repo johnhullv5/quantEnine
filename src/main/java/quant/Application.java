@@ -190,23 +190,27 @@ public class Application {
    	}
     
     
+    
+    
     @CrossOrigin
     @RequestMapping("/indicators")
    	public  @ResponseBody String indicators() {
     	InputParameterSet params = getInputParameterSet;
     	String date = params.getIndicatorDate();
     	
-    	Map<String,List<String>> indictors = finalData.get(date);
-    	indictors.put("\"SMA\"", indictors.get("SMASIG"));
-    	indictors.put("\"MACD\"", indictors.get("MACDSIG"));
-    	indictors.put("\"BOLL\"", indictors.get("BOLLSIG"));
-    	indictors.put("\"RSI\"", indictors.get("RSISIG"));
-    	indictors.put("\"KDJ\"", indictors.get("KDJSIG"));
-    	indictors.put("\"REX\"", indictors.get("REXSIG"));
-    	indictors.put("\"VMA\"", indictors.get("VMASIG"));
-    	indictors.put("\"HIGH\"", indictors.get("HIGHSIG"));
+    	Map<String,List<String>> indictors_return = new HashMap<String,List<String>>();
     	
-		return indictors.toString().replace("=", ":");
+    	Map<String,List<String>> indictors = finalData.get(date);
+    	indictors_return.put("\"SMA\"", indictors.get("SMASIG"));
+    	indictors_return.put("\"MACD\"", indictors.get("MACDSIG"));
+    	indictors_return.put("\"BOLL\"", indictors.get("BOLLSIG"));
+    	indictors_return.put("\"RSI\"", indictors.get("RSISIG"));
+    	indictors_return.put("\"KDJ\"", indictors.get("KDJSIG"));
+    	indictors_return.put("\"REX\"", indictors.get("REXSIG"));
+    	indictors_return.put("\"VMA\"", indictors.get("VMASIG"));
+    	indictors_return.put("\"HIGH\"", indictors.get("HIGHSIG"));
+    	
+		return indictors_return.toString().replace("=", ":");
        	
    	}
     
